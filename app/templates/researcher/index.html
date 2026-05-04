@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Researcher – Eurystheus{% endblock %}
+{% block page_title %}Researcher Module{% endblock %}
+
+{% block head %}
+<style>
+  .drop-zone {
+    border: 2px dashed #90caf9;
+    border-radius: 1rem;
+    padding: 3rem 2rem;
+    text-align: center;
+    background: #e8eaf6;
+    cursor: pointer;
+    transition: background .2s, border-color .2s;
+  }
+  .drop-zone.dragover {
+    background: #c5cae9;
+    border-color: #3949ab;
+  }
+  .drop-zone i { font-size: 3rem; color: #5c6bc0; }
+  .drop-zone p  { margin-top: .75rem; color: #455a64; }
+</style>
+{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Dashboard</a></li>
+    <li class="breadcrumb-item active">Researcher</li>
+  </ol>
+</nav>
+
+<div class="row justify-content-center">
+  <div class="col-12 col-lg-8">
+
+    <div class="card border-0 shadow-sm rounded-4 p-4">
+      <h4 class="fw-bold mb-1"><i class="bi bi-journal-text text-primary me-2"></i>Syllabus Uploader</h4>
+      <p class="text-muted small mb-4">
+        Upload your syllabus file. Supported formats: <strong>PDF, DOCX, DOC, TXT</strong>.<br>
+        The module will extract all case citations and map them to their topic hierarchy,
+        then let you export the result as a <strong>CSV</strong> or <strong>XLSX</strong> file.
+      </p>
+
+      <form id="uploadForm" action="{{ url_for('researcher.process') }}" method="POST"
+            enctype="multipart/form-data">
+
+        <!-- Drop zone -->
+        <div class="drop-zone mb-3" id="dropZone">
+          <i class="bi bi-cloud-arrow-up"></i>
+          <p>Drag &amp; drop your syllabus here, or <strong>click to browse</strong></p>
+          <p id="fileLabel" class="text-primary fw-semibold small"></p>
+          <input type="file" name="syllabus" id="syllabusInput"
+                 accept=".pdf,.docx,.doc,.txt"
+                 class="d-none" required />
+        </div>
+
+        <div class="d-flex gap-2 justify-content-end">
+          <button type="submit" class="btn btn-primary px-4" id="submitBtn" disabled>
+            <i class="bi bi-play-fill me-1"></i> Process Syllabus
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- How it works -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 mt-4">
+      <h5 class="fw-semibold mb-3"><i class="bi bi-info-circle text-info me-2"></i>How it works</h5>
+      <ol class="mb-0 text-muted small lh-lg">
+        <li>Upload a syllabus file (PDF, DOCX or plain text).</li>
+        <li>The parser detects numbered headings (e.g. <code>1.</code>, <code>1.1</code>, <code>1.1.1</code>, <code>1.1.1.1</code>) to build the topic hierarchy.</li>
+        <li>Case citations (<em>Smith v Jones [1990]</em>, <em>Re ABC Ltd</em>, etc.) are extracted from each section.</li>
+        <li>Results are displayed in a table — download them as <strong>CSV</strong> or <strong>XLSX</strong>.</li>
+      </ol>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const input    = document.getElementById('syllabusInput');
+const dropZone = document.getElementById('dropZone');
+const fileLabel= document.getElementById('fileLabel');
+const submitBtn= document.getElementById('submitBtn');
+
+dropZone.addEventListener('click', () => input.click());
+
+input.addEventListener('change', () => {
+  if (input.files.length) {
+    fileLabel.textContent = input.files[0].name;
+    submitBtn.disabled = false;
+  }
+});
+
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('dragover');
+  const dt = e.dataTransfer;
+  if (dt.files.length) {
+    input.files = dt.files;
+    fileLabel.textContent = dt.files[0].name;
+    submitBtn.disabled = false;
+  }
+});
+</script>
+{% endblock %}

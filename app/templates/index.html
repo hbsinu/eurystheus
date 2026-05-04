@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard – Eurystheus{% endblock %}
+{% block page_title %}Control Panel{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+  <h2 class="fw-bold text-dark mb-1">Welcome to Eurystheus</h2>
+  <p class="text-muted">Select a module below to begin your automation workflow.</p>
+</div>
+
+<div class="row g-4">
+
+  <!-- Researcher Module -->
+  <div class="col-12 col-sm-6 col-xl-4">
+    <a href="{{ url_for('researcher.index') }}" class="text-decoration-none">
+      <div class="card module-card p-4">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <div class="module-icon bg-primary bg-opacity-10 text-primary">
+            <i class="bi bi-journal-text"></i>
+          </div>
+          <div>
+            <h5 class="mb-0 fw-semibold">Researcher</h5>
+            <small class="text-muted">Syllabus → Case Export</small>
+          </div>
+        </div>
+        <p class="text-muted small mb-0">
+          Upload a syllabus file (PDF, DOCX, TXT). The module extracts every
+          case citation, maps it to its topic hierarchy, and lets you export
+          the result as <strong>CSV</strong> or <strong>XLSX</strong>.
+        </p>
+      </div>
+    </a>
+  </div>
+
+  <!-- Placeholder – more modules coming soon -->
+  <div class="col-12 col-sm-6 col-xl-4">
+    <div class="card module-card p-4 opacity-50" style="cursor:default;">
+      <div class="d-flex align-items-center gap-3 mb-3">
+        <div class="module-icon bg-secondary bg-opacity-10 text-secondary">
+          <i class="bi bi-gear"></i>
+        </div>
+        <div>
+          <h5 class="mb-0 fw-semibold text-muted">More Modules</h5>
+          <small class="text-muted">Coming soon</small>
+        </div>
+      </div>
+      <p class="text-muted small mb-0">
+        Additional automation modules will appear here as they are added to
+        the platform.
+      </p>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

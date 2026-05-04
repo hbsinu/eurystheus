@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Results – Researcher – Eurystheus{% endblock %}
+{% block page_title %}Researcher – Results{% endblock %}
+
+{% block head %}
+<style>
+  .results-table th { white-space: nowrap; background: #e8eaf6; color: #1a237e; }
+  .badge-topic       { background: #5c6bc0; }
+  .badge-sub         { background: #42a5f5; }
+  .badge-subsub      { background: #66bb6a; }
+  .badge-further     { background: #ffa726; color: #000; }
+</style>
+{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="{{ url_for('researcher.index') }}">Researcher</a></li>
+    <li class="breadcrumb-item active">Results</li>
+  </ol>
+</nav>
+
+<!-- Stats & export bar -->
+<div class="card border-0 shadow-sm rounded-4 p-3 mb-4 d-flex flex-row align-items-center gap-3 flex-wrap">
+  <div>
+    <span class="fs-4 fw-bold text-primary">{{ count }}</span>
+    <span class="text-muted ms-1">case{{ 's' if count != 1 else '' }} extracted</span>
+  </div>
+  <div class="ms-auto d-flex gap-2 flex-wrap">
+    {% if count %}
+    <form action="{{ url_for('researcher.export') }}" method="POST" class="d-inline">
+      <input type="hidden" name="format" value="csv" />
+      <button type="submit" class="btn btn-outline-success btn-sm px-3">
+        <i class="bi bi-filetype-csv me-1"></i> Download CSV
+      </button>
+    </form>
+    <form action="{{ url_for('researcher.export') }}" method="POST" class="d-inline">
+      <input type="hidden" name="format" value="xlsx" />
+      <button type="submit" class="btn btn-outline-primary btn-sm px-3">
+        <i class="bi bi-file-earmark-excel me-1"></i> Download XLSX
+      </button>
+    </form>
+    {% endif %}
+    <a href="{{ url_for('researcher.index') }}" class="btn btn-secondary btn-sm px-3">
+      <i class="bi bi-upload me-1"></i> Upload Another
+    </a>
+  </div>
+</div>
+
+{% if rows %}
+<!-- Filter / search -->
+<div class="mb-3">
+  <input type="text" id="tableSearch" class="form-control form-control-sm w-auto"
+         placeholder="🔍  Filter results…" style="max-width:320px;" />
+</div>
+
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0 results-table" id="resultsTable">
+      <thead>
+        <tr>
+          {% for col in columns %}
+          <th>{{ col }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+        <tr>
+          <td class="fw-semibold">{{ row['Case'] }}</td>
+          <td>
+            {% if row['Topic'] %}
+            <span class="badge badge-topic text-white">{{ row['Topic'] }}</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if row['Subtopic'] %}
+            <span class="badge badge-sub text-white">{{ row['Subtopic'] }}</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if row['Sub-subtopic'] %}
+            <span class="badge badge-subsub text-white">{{ row['Sub-subtopic'] }}</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if row['Further Division'] %}
+            <span class="badge badge-further">{{ row['Further Division'] }}</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% else %}
+<div class="alert alert-warning rounded-4">
+  <i class="bi bi-exclamation-triangle me-2"></i>
+  No case citations were found. Please upload a syllabus that contains case
+  references (e.g. <em>Smith v Jones [1990]</em>).
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('tableSearch')?.addEventListener('input', function () {
+  const q = this.value.toLowerCase();
+  document.querySelectorAll('#resultsTable tbody tr').forEach(tr => {
+    tr.style.display = tr.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+});
+</script>
+{% endblock %}
