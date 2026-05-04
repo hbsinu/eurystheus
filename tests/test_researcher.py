@@ -19,7 +19,7 @@ SIMPLE_SYLLABUS = """\
 1. Contract Law
    Smith v Jones [1990]
 1.1 Offer and Acceptance
-   Adams v Lindsel [1818]
+   Adams v Lindsell [1818]
 1.1.1 Communication of Offer
    Byrne v Van Tienhoven [1880]
 1.1.1.1 Postal Rule
